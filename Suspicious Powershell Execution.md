@@ -3,7 +3,6 @@
 This attack falls into the execution phase of MITRE ATT&CK and requires initial access to the victim machine via phishing, credential dumping or other methods. This scenario demonstrates the different techniques and tactics attackers use when using PowerShell maliciously and details the common misconfigurations that allow these attacks to take place, and best practices to secure your network
 from malicious PowerShell use.
 
-# Setup
 # Attack Types
 1. **Local PowerShell script Execution**
    Attacker runs a script that is hosted locally
